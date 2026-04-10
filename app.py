@@ -166,6 +166,16 @@ def home():
     for f in favoritos:
         lista_fav += f"<p>⭐ {f}</p>" 
 
+        menu = ""
+
+    if "usuario" in session:
+        menu = '<a href="/logout">🚪 Sair</a>'
+    else:
+        menu = '''
+    <a href="/login">🔐 Login</a>
+    <a href="/cadastro">📝 Cadastro</a>
+    '''
+
     return f""" 
 <html>
 
@@ -278,13 +288,11 @@ input {{
 <div class="menu">
 
     <div class="logo">🚀 PromptKeeper</div>
-
-    <div class="menu-direita">
-        <a href="/login">🔐 Login</a>
-        <a href="/cadastro">📝 Cadastro</a>
-    </div>
-
+    
+<div class="menu-direita">
+    {menu}
 </div>
+
 
 
 <form method="POST">
@@ -533,6 +541,12 @@ def editar_ajax():
     conn.close()
 
     return "ok"
+
+
+@app.route("/logout")
+def logout():
+    session.pop("usuario", None)
+    return redirect(url_for("login"))
 
 
 # =========================
