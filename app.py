@@ -278,12 +278,52 @@ input {{
     text-decoration: none;
 }}
 
+.busca-box {{
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}}
+
+h2 {{
+    margin-top: 30px;
+}}
+
+#lista-prompts, #lista_favoritos {{
+    margin-top: 10px;
+}}
+
+.card {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}}
+
+.texto {{
+    flex: 1;
+}}
+
+button {{
+    background: #333;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}}
+
+button:hover {{
+    background: #555;
+}}
+
+.gerar {{
+    background: linear-gradient(45deg, #00c853, #64dd17);
+}}
+
+
 </style>
 </head>
 
 <body>
 
-<h1>🚀 PromptKeeper</h1>
 
 <div class="menu">
 
@@ -293,17 +333,17 @@ input {{
     {menu}
 </div>
 
-
-
-<form method="POST">
+<form method="POST" class="busca-box">
     <input name="busca" id="busca" placeholder="🔍 Buscar...">
-    <button type="submit" class="botao">Buscar</button>
-    <button type="button" class="botao" onclick="gerarPrompt()">💡 Gerar</button>
+    <button type="submit" class="botao gerar">Buscar</button>
+    <button type="button" class="botao gerar" onclick="gerarPrompt()">💡 Gerar</button>
 </form>
 
 <br>
 
-<a class="limpar" href="/limpar">🗑 Limpar</a>
+<div style="margin-top:10px;">
+    <a class="limpar" href="/limpar">🗑 Limpar tudo</a>
+</div>
 
 <h2>Prompts:</h2>
 <div id="lista-prompts">
