@@ -59,9 +59,7 @@ def carregar_prompts():
     "SELECT id, texto FROM prompts WHERE usuario = ?", 
     (session["usuario"],)
 )
-    return cursor.fetchall()
     dados = cursor.fetchall()
-
     conn.close()
     return dados  
 
