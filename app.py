@@ -435,12 +435,16 @@ def login():
             return "<h3>Login inválido!</h3>"
 
     return """
-    <h2>Login</h2
+    <h2>Login</h2>
+
     <form method="POST">
-        <input name="username" placeholder="Usuário"><br>
+        <input name="username" placeholder="Usuário"><br><br>
         <input name="senha" type="password" placeholder="Senha"><br><br>
         <button type="submit">Entrar</button>
     </form>
+
+    <br>
+    <a href="/cadastro">Criar conta</a>
     """
 
 
