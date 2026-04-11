@@ -191,23 +191,12 @@ body {{
     margin: auto;
 }}
 
-h1 {{
-    text-align: center;
-}}
-
-.card {{
-    background: #1e1e1e;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    transition: 0.3s;
-}}
-
-
 .menu {{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
     padding: 15px 20px;
     background: rgba(0,0,0,0.3);
     border-radius: 12px;
@@ -219,26 +208,21 @@ h1 {{
     font-weight: bold;
 }}
 
-.menu-direita a {{
-    margin-left: 15px;
-    text-decoration: none;
-    color: white;
-    background: linear-gradient(45deg, #00c853, #00b0ff);
-    padding: 8px 14px;
-    border-radius: 8px;
+.topo-esquerda,
+.topo-centro,
+.topo-direita {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}}
+
+.card {{
+    background: #1e1e1e;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
     transition: 0.3s;
 }}
-
-.menu-direita a:hover {{
-    transform: scale(1.1);
-}}
-
-
-h1 {{
-    text-align: center;
-}}
-
-
 
 .card:hover {{
     transform: scale(1.02);
@@ -256,7 +240,6 @@ button {{
 
 input {{
     padding: 10px;
-    width: 60%;
     border-radius: 8px;
     border: none;
 }}
@@ -278,71 +261,34 @@ input {{
     text-decoration: none;
 }}
 
-.busca-box {{
-    display: flex;
-    gap: 10px;
-    margin: 20px 0;
-}}
-
 h2 {{
     margin-top: 30px;
 }}
-
-#lista-prompts, #lista_favoritos {{
-    margin-top: 10px;
-}}
-
-.card {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}}
-
-.texto {{
-    flex: 1;
-}}
-
-button {{
-    background: #333;
-    border: none;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-}}
-
-button:hover {{
-    background: #555;
-}}
-
-.gerar {{
-    background: linear-gradient(45deg, #00c853, #64dd17);
-}}
-
 
 </style>
 </head>
 
 <body>
 
-
 <div class="menu">
 
-    <div class="logo">🚀 PromptKeeper</div>
-    
-<div class="menu-direita">
-    {menu}
-</div>
+    <div class="topo-esquerda">
+        <div class="logo">🚀 PromptKeeper</div>
+        <a href="/logout">🚪 Sair</a>
+    </div>
 
-<form method="POST" class="busca-box">
-    <input name="busca" id="busca" placeholder="🔍 Buscar...">
-    <button type="submit" class="botao gerar">Buscar</button>
-    <button type="button" class="botao gerar" onclick="gerarPrompt()">💡 Gerar</button>
-</form>
+    <div class="topo-centro">
+        <form method="POST">
+            <input name="busca" id="busca" placeholder="🔍 Buscar...">
+            <button type="submit" class="botao">Buscar</button>
+            <button type="button" class="botao" onclick="gerarPrompt()">💡 Gerar</button>
+        </form>
+    </div>
 
-<br>
+    <div class="topo-direita">
+        <a class="limpar" href="/limpar">🗑 Limpar</a>
+    </div>
 
-<div style="margin-top:10px;">
-    <a class="limpar" href="/limpar">🗑 Limpar tudo</a>
 </div>
 
 <h2>Prompts:</h2>
@@ -363,12 +309,12 @@ function copiarTexto(botao) {{
     alert("Copiado!");
 }}
 
-function favoritar(id, botao) {{
+function favoritar(id) {{
     fetch(`/favoritar_ajax/${{id}}`)
     .then(() => location.reload());
 }}
 
-function excluir(id, botao) {{
+function excluir(id) {{
     fetch("/excluir_ajax", {{
         method: "POST",
         headers: {{ "Content-Type": "application/json" }},
@@ -376,7 +322,7 @@ function excluir(id, botao) {{
     }}).then(() => location.reload());
 }}
 
-function editar(id, botao) {{
+function editar(id) {{
     let novo = prompt("Novo texto:");
     if (!novo) return;
 
@@ -489,7 +435,7 @@ def login():
             return "Login inválido!"
 
     return """
-    <h2>Login</h2>
+    <h2>Login</h2
     <form method="POST">
         <input name="username" placeholder="Usuário"><br>
         <input name="senha" type="password" placeholder="Senha"><br>
