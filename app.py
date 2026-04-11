@@ -432,14 +432,14 @@ def login():
             session["usuario"] = user
             return redirect(url_for("home"))
         else:
-            return "Login inválido!"
+            return "<h3>Login inválido!</h3>"
 
     return """
     <h2>Login</h2
     <form method="POST">
         <input name="username" placeholder="Usuário"><br>
-        <input name="senha" type="password" placeholder="Senha"><br>
-        <button>Entrar</button>
+        <input name="senha" type="password" placeholder="Senha"><br><br>
+        <button type="submit">Entrar</button>
     </form>
     """
 
