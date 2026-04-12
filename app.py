@@ -484,6 +484,19 @@ def cadastro():
         return redirect(url_for("login"))
 
     return """
+    <h2 style="color:red;">⚠️ Usuário já existe!</h2>
+
+    <br>
+
+    <a href="/cadastro">
+        <button style="padding:10px; margin-right:10px;">🔙 Voltar</button>
+    </a>
+
+    <a href="/login">
+        <button style="padding:10px;">🔐 Ir para Login</button>
+    </a>
+    """
+    return """
     <h2>Cadastro</h2>
     <form method="POST">
         <input name="username" placeholder="Usuário"><br>
