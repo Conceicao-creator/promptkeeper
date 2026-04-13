@@ -478,10 +478,23 @@ def cadastro():
             )
             conn.commit()
         except:
-            return "Usuário já existe!"
+            return """
+    <h2>Cadastro</h2>
 
-        conn.close()
-        return redirect(url_for("login"))
+    <p style="color:red;">⚠ Usuário já existe!</p>
+
+    <form method="POST">
+        <input name="username" placeholder="Usuário"><br><br>
+        <input name="senha" type="password" placeholder="Senha"><br><br>
+        <button>Cadastrar</button>
+    </form>
+
+    <br>
+    <a href="/login">🔐 Ir para Login</a>
+    """
+
+    conn.close()
+    return redirect(url_for("login"))
 
     return """
     <h2 style="color:red;">⚠️ Usuário já existe!</h2>
