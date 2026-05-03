@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="manifest" href="manifest.json">
+
+  <meta charset="UTF-8">
+  <title>PromptKeeper</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    li {
+      background: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      list-style: none;
+    }
+
+    #sugestoes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+#sugestoes li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+#sugestoes li:hover {
+  background-color: #eee;
+}
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>PromptKeeper</h1>
+
+  <input type="text" id="categoria" placeholder="Categoria" oninput="mostrarSugestoes()">
+  <ul id="sugestoes"></ul>
+
+
+  <input type="text" id="titulo" placeholder="Título do prompt">
+
+  <textarea id="prompt" oninput="sugerirCategoriaAutomatica()" placeholder="Digite seu prompt aqui..." rows="5"></textarea>
+
+
+
+  <button onclick="salvarPrompt()">Salvar</button>
+
+  <input type="text" id="filtro" placeholder="Filtrar por categoria" oninput="mostrarPrompts()">
+
+  <button onclick="fazerBackup()">Fazer Backup</button>
+  <input type="file" onchange="restaurarBackup(event)">
+
+
+
+  <h2>Seus Prompts:</h2>
+  <ul id="lista"></ul>
+
+</div>
+
+<script>
+let editandoIndex = null;
+
+let prompts = JSON.parse(localStorage.getItem("prompts")) || [];
+
+function mostrarPrompts() {
+  const filtro = document.getElementById("filtro").value.toLowerCase();
+  const lista = document.getElementById("lista");
+
+  lista.innerHTML = "";
+
+  prompts.forEach((p, index) => {
+
+    if (
+  filtro &&
+  !p.categoria.toLowerCase().includes(filtro) &&
+  !p.titulo.toLowerCase().includes(filtro)
+) {
+  return;
+}
+
+
+    let item = document.createElement("li");
+
+    let texto = document.createElement("div");
+    texto.innerHTML =
+      "<strong>[" + p.categoria + "]</strong> " +
+      "<strong>" + p.titulo + "</strong><br>" +
+      p.texto;
+
+    let botao = document.createElement("button");
+    botao.textContent = "Excluir";
+    botao.onclick = function() {
+      prompts.splice(index, 1);
+      localStorage.setItem("prompts", JSON.stringify(prompts));
+      mostrarPrompts();
+    };
+
+    let botaoEditar = document.createElement("button");
+botaoEditar.textContent = "Editar";
+
+botaoEditar.onclick = function() {
+  document.getElementById("categoria").value = p.categoria;
+  document.getElementById("titulo").value = p.titulo;
+  document.getElementById("prompt").value = p.texto;
+
+  editandoIndex = index;
+};
+
+item.appendChild(botaoEditar);
+
+    item.appendChild(texto);
+    item.appendChild(botao);
+    lista.appendChild(item);
+  });
+}
+
+function salvarPrompt() {
+  const categoria = document.getElementById("categoria").value;
+  const titulo = document.getElementById("titulo").value;
+  const texto = document.getElementById("prompt").value;
+
+  if (texto.trim() === "") return;
+
+  if (editandoIndex !== null) {
+  prompts[editandoIndex] = { categoria, titulo, texto };
+  editandoIndex = null;
+} else {
+  prompts.push({ categoria, titulo, texto });
+}
+
+
+  localStorage.setItem("prompts", JSON.stringify(prompts));
+
+  document.getElementById("prompt").value = "";
+  mostrarPrompts();
+}
+
+mostrarPrompts();
+
+function fazerBackup() {
+  const dados = JSON.stringify(prompts, null, 2);
+
+  const blob = new Blob([dados], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "promptkeeper_backup.json";
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function restaurarBackup(event) {
+  const arquivo = event.target.files[0];
+
+  if (!arquivo) return;
+
+  const leitor = new FileReader();
+
+  leitor.onload = function(e) {
+    const dados = JSON.parse(e.target.result);
+
+    prompts = dados;
+    localStorage.setItem("prompts", JSON.stringify(prompts));
+
+    mostrarPrompts();
+  };
+
+  leitor.readAsText(arquivo);
+}
+
+function mostrarSugestoes() {
+  const input = document.getElementById("categoria").value.toLowerCase();
+  const lista = document.getElementById("sugestoes");
+
+  lista.innerHTML = "";
+
+  if (!input) return;
+
+  // pegar categorias já existentes
+  const categorias = [...new Set(prompts.map(p => p.categoria))];
+
+  categorias.forEach(cat => {
+    if (cat.toLowerCase().startsWith(input)) {
+
+      let item = document.createElement("li");
+      item.textContent = cat;
+
+      item.onclick = function() {
+        document.getElementById("categoria").value = cat;
+        lista.innerHTML = "";
+      };
+
+      lista.appendChild(item);
+    }
+  });
+}
+
+function sugerirCategoriaAutomatica() {
+  const texto = document.getElementById("prompt").value.toLowerCase();
+
+  let categoria = "";
+
+  if (texto.includes("imagem")) categoria = "IMAGENS";
+  else if (texto.includes("negócio") || texto.includes("marketing")) categoria = "NEGOCIOS";
+  else if (texto.includes("ideia")) categoria = "IDEIAS";
+
+  if (categoria) {
+    document.getElementById("categoria").value = categoria;
+  }
+}
+
+
+
+</script>
+
+</body>
+</html>
